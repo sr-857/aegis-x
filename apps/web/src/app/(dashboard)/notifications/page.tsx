@@ -1,13 +1,13 @@
 "use client";
 import { DemoBadge } from "@/components/demo-badge";
 import { usePageTitle } from "@/lib/hooks/use-page-title";
+import { useToast } from "@/components/toast";
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { useNotificationStore, type AppNotification } from "@/lib/stores/notification-store";
 import { StatusIndicator } from "@/components/shared/status-indicator";
 import {
@@ -54,10 +54,18 @@ const initialNotifications: AppNotification[] = [
 
 export default function NotificationsPage() {
   usePageTitle("Notifications");
-  const [notifications, setNotifications] = useState<AppNotification[]>(initialNotifications);
+  const { notifications, addNotification, markRead, markAllRead, clearAll } = useNotificationStore();
+  const [initialized, setInitialized] = useState(false);
   const [filter, setFilter] = useState<string>(() => {
     return (typeof window !== "undefined" ? localStorage.getItem("notif-filter") : null) || "all";
   });
+
+  useEffect(() => {
+    if (!initialized && initialNotifications.length > 0 && notifications.length === 0) {
+      initialNotifications.forEach(n => addNotification(n));
+      setInitialized(true);
+    }
+  }, [initialized, notifications.length, addNotification]);
 
   useEffect(() => {
     if (filter !== "all") {
@@ -75,18 +83,17 @@ export default function NotificationsPage() {
     ? notifications.filter((n) => !n.read)
     : notifications.filter((n) => n.type === filter);
 
-  const markRead = (id: string) => {
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, read: true } : n))
-    );
+  const handleMarkRead = (id: string) => {
+    const notif = notifications.find(n => n.id === id);
+    if (notif && !notif.read) markRead(id);
   };
 
-  const markAllRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+  const handleMarkAllRead = () => {
+    markAllRead();
   };
 
-  const clearAll = () => {
-    setNotifications([]);
+  const handleClearAll = () => {
+    clearAll();
   };
 
   return (
@@ -129,11 +136,11 @@ export default function NotificationsPage() {
           ))}
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm" onClick={markAllRead}>
+          <Button variant="ghost" size="sm" onClick={handleMarkAllRead}>
             <CheckCheck className="w-4 h-4 mr-1" />
             Mark all read
           </Button>
-          <Button variant="ghost" size="sm" onClick={clearAll}>
+          <Button variant="ghost" size="sm" onClick={handleClearAll}>
             <Trash2 className="w-4 h-4 mr-1" />
             Clear all
           </Button>
@@ -157,7 +164,7 @@ export default function NotificationsPage() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, height: 0, marginBottom: 0 }}
                     transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1], delay: i * 0.03 }}
-                    onClick={() => markRead(notification.id)}
+                    onClick={() => handleMarkRead(notification.id)}
                     className={`flex items-start gap-4 p-5 cursor-pointer transition-all duration-300 group hover:bg-white/[0.02] ${
                       !notification.read ? "bg-primary/[0.02]" : ""
                     }`}

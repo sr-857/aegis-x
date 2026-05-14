@@ -1,0 +1,29 @@
+{
+  "name": "aegis-recon-intelligence",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo dev",
+    "dev:web": "npm run dev --workspace=apps/web",
+    "dev:local": "npm run dev --workspace=local-dev",
+    "build": "turbo build",
+    "build:web": "npm run build --workspace=apps/web",
+    "build:local": "npm run build --workspace=local-dev",
+    "lint": "turbo lint",
+    "clean": "turbo clean",
+    "typecheck": "turbo typecheck"
+  },
+  "devDependencies": {
+    "turbo": "^2.0.0",
+    "typescript": "^5.4.0",
+    "concurrently": "^8.2.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "packageManager": "npm@10.2.4"
+}

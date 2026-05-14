@@ -1,0 +1,12 @@
+{
+  "name": "AEGIS Reconnaissance Intelligence Suite",
+  "short_name": "AEGIS",
+  "description": "Advanced attack surface reconnaissance and vulnerability intelligence platform",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#f2ca50",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

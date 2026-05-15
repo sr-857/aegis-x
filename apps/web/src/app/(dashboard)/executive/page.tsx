@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useDashboardSummary } from "@/lib/hooks/use-dashboard";
 import { useScanEvents } from "@/lib/hooks/use-scanner";
 import { MetricCard } from "@/components/shared/metric-card";
@@ -11,28 +11,20 @@ import { StatusIndicator } from "@/components/shared/status-indicator";
 import { TimelineNode } from "@/components/charts/timeline-node";
 import { DemoBadge } from "@/components/demo-badge";
 import { usePageTitle } from "@/lib/hooks/use-page-title";
-import { DonutChart } from "@/components/charts/donut-chart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { CardSkeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   Shield,
-  TrendingUp,
-  TrendingDown,
   Activity,
-  Target,
   AlertTriangle,
-  Globe,
-  Zap,
   ChevronRight,
   RefreshCw,
   Download,
-  Filter,
 } from "lucide-react";
-import { LineChart, Line, Area, AreaChart, ResponsiveContainer, XAxis, YAxis, Tooltip as RechartsTooltip } from "recharts";
+import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, Tooltip as RechartsTooltip } from "recharts";
+import { cn } from "@/lib/utils";
 
 const chartData = [
   { time: "00:00", assets: 120, threats: 8, scans: 45 },

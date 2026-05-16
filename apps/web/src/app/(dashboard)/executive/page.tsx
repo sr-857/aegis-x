@@ -24,7 +24,8 @@ import {
   Download,
 } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, Tooltip as RechartsTooltip } from "recharts";
-import { cn } from "@/lib/utils";
+import { cn, downloadJSON } from "@/lib/utils";
+import { useToast } from "@/components/toast";
 
 const chartData = [
   { time: "00:00", assets: 120, threats: 8, scans: 45 },
@@ -48,6 +49,7 @@ export default function ExecutiveDashboard() {
   const { events, isStreaming } = useScanEvents();
   const [timeframe, setTimeframe] = useState("24h");
   usePageTitle("Executive Dashboard");
+  const { addToast } = useToast();
 
   if (isLoading) {
     return (
@@ -105,7 +107,21 @@ export default function ExecutiveDashboard() {
           <Button variant="ghost" size="icon" onClick={() => refetch()}>
             <RefreshCw className="w-4 h-4" />
           </Button>
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" onClick={() => {
+            const exportData = {
+              exportedAt: new Date().toISOString(),
+              kpis: summary?.kpis || [],
+              timeline: summary?.timeline || [],
+              threatStats: {
+                critical: 72,
+                high: 18,
+                medium: 8,
+                low: 2,
+              },
+            };
+            downloadJSON(exportData, `aegis-dashboard-${Date.now()}.json`);
+            addToast({ type: "success", title: "Export ready", message: "Dashboard data exported as JSON" });
+          }}>
             <Download className="w-4 h-4 mr-1" />
             Export
           </Button>

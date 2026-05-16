@@ -31,10 +31,8 @@ import {
   X,
   ChevronRight,
   ExternalLink,
-  ArrowUpDown,
-  BarChart3,
-  Target,
   Download,
+  Target,
 } from "lucide-react";
 
 const severityColors = {
@@ -52,6 +50,7 @@ export default function VulnerabilitiesPage() {
   const [search, setSearch] = useState("");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [visibleCount, setVisibleCount] = useState(10);
+  const [notes, setNotes] = useState("Initial analysis indicates this CVE is exploitable via the public-facing API endpoint. Recommend patching within the remediation window.");
   const { addToast } = useToast();
 
   const filtered = useMemo(() => {
@@ -324,11 +323,15 @@ export default function VulnerabilitiesPage() {
                     </div>
                     <Separator className="my-4" />
                     <div className="flex gap-2">
-                      <Button variant="default" size="sm" className="flex-1">
+                      <Button variant="default" size="sm" className="flex-1" onClick={() => {
+                        addToast({ type: "success", title: "Status updated", message: `${selected?.title} marked as resolved` });
+                      }}>
                         <CheckCircle2 className="w-4 h-4 mr-1" />
                         Mark Resolved
                       </Button>
-                      <Button variant="outline" size="sm" className="flex-1">
+                      <Button variant="outline" size="sm" className="flex-1" onClick={() => {
+                        addToast({ type: "info", title: "In Progress", message: `${selected?.title} is now being investigated` });
+                      }}>
                         <Clock className="w-4 h-4 mr-1" />
                         In Progress
                       </Button>
@@ -348,13 +351,16 @@ export default function VulnerabilitiesPage() {
                   <textarea
                     placeholder="Enter analysis notes, remediation steps, or contextual information..."
                     className="w-full h-32 bg-[#0e0e0e] border border-outline-variant/30 rounded-lg p-4 text-sm text-on-surface placeholder:text-on-surface-variant/30 focus:outline-none focus:border-primary/50 resize-none transition-all duration-300"
-                    defaultValue="Initial analysis indicates this CVE is exploitable via the public-facing API endpoint. Recommend patching within the remediation window."
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
                   />
                   <div className="flex justify-between items-center mt-3">
-                    <span className="text-xs text-on-surface-variant/40">Click save to persist your analysis notes</span>
+                    <span className="text-xs text-on-surface-variant/40">
+                      {selected ? `Analyzing ${selected.id}` : "Select a vulnerability to add notes"}
+                    </span>
                     <Button variant="default" size="sm" onClick={() => {
                       addToast({ type: "success", title: "Notes saved", message: "Analyst notes have been updated" });
-                    }}>
+                    }} disabled={!selected}>
                       Save Notes
                     </Button>
                   </div>

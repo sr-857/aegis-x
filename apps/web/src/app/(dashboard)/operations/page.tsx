@@ -32,9 +32,9 @@ export default function OperationsPage() {
   const { events } = useScanEvents();
   const { data: telemetry } = useTelemetry();
   const terminalRef = useRef<HTMLDivElement>(null);
-  const [streamActive, setStreamActive] = useState(true);
   const [logLevel, setLogLevel] = useState<string>(() => {
-    return (typeof window !== "undefined" ? localStorage.getItem("ops-log-level") : null) || "all";
+    if (typeof window === "undefined") return "all";
+    return localStorage.getItem("ops-log-level") || "all";
   });
 
   useEffect(() => {
@@ -71,7 +71,7 @@ export default function OperationsPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <StatusIndicator status={streamActive ? "active" : "idle"} label={streamActive ? "Live" : "Paused"} />
+          <StatusIndicator status={events.length > 0 ? "active" : "idle"} label={events.length > 0 ? "Live" : "Idle"} />
           <DemoBadge />
         </div>
       </div>

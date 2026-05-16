@@ -29,14 +29,33 @@ import {
 } from "lucide-react";
 
 export default function OperationsPage() {
-  usePageTitle("Live Operations");
-  const { events, isStreaming } = useScanEvents();
   const { data: telemetry, isLoading } = useTelemetry();
+  const { events, isStreaming } = useScanEvents();
+  const [logLevel, setLogLevel] = useState("all");
   const terminalRef = useRef<HTMLDivElement>(null);
-  const [logLevel, setLogLevel] = useState<string>(() => {
-    if (typeof window === "undefined") return "all";
-    return localStorage.getItem("ops-log-level") || "all";
-  });
+  const initialized = useRef(false);
+
+  useEffect(() => {
+    if (!initialized.current && typeof window !== "undefined") {
+      const saved = localStorage.getItem("ops-log-level");
+      if (saved) setLogLevel(saved);
+      initialized.current = true;
+    }
+  }, []);
+
+  useEffect(() => {
+    if (logLevel !== "all") {
+      localStorage.setItem("ops-log-level", logLevel);
+    } else if (initialized.current) {
+      localStorage.removeItem("ops-log-level");
+    }
+  }, [logLevel]);
+
+  useEffect(() => {
+    if (terminalRef.current) {
+      terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
+    }
+  }, [events.length]);
 
   if (isLoading) {
     return (
@@ -56,20 +75,6 @@ export default function OperationsPage() {
       </div>
     );
   }
-
-  useEffect(() => {
-    if (logLevel !== "all") {
-      localStorage.setItem("ops-log-level", logLevel);
-    } else {
-      localStorage.removeItem("ops-log-level");
-    }
-  }, [logLevel]);
-
-  useEffect(() => {
-    if (terminalRef.current) {
-      terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
-    }
-  }, [events.length]);
 
   const filteredEvents = logLevel === "all"
     ? events

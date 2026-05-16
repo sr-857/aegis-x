@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAssets } from "@/lib/hooks/use-assets";
@@ -29,7 +29,7 @@ export function GlobalSearch({ open, onClose }: GlobalSearchProps) {
     }
   }, [open]);
 
-  const results = [
+  const results = useMemo(() => [
     ...(assets || [])
       .filter(
         (a) =>
@@ -58,7 +58,7 @@ export function GlobalSearch({ open, onClose }: GlobalSearchProps) {
         href: "/vulnerabilities",
         icon: AlertTriangle,
       })),
-  ];
+  ], [assets, vulnerabilities, query]);
 
   const navigate = useCallback(
     (index: number) => {

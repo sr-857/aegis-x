@@ -9,24 +9,23 @@ export function LoadingBar() {
   const [loading, setLoading] = useState(false);
   const scaleX = useSpring(0, { stiffness: 100, damping: 20 });
   const opacity = useTransform(scaleX, [0, 0.1, 1], [0, 1, 1]);
-  const timersRef = useRef<{ outer?: NodeJS.Timeout; inner?: NodeJS.Timeout }>({});
 
   useEffect(() => {
     setLoading(true);
     scaleX.set(0.3);
 
-    timersRef.current.outer = setTimeout(() => {
+    const outer = setTimeout(() => {
       scaleX.set(1);
     }, 300);
 
-    timersRef.current.inner = setTimeout(() => {
+    const inner = setTimeout(() => {
       setLoading(false);
       scaleX.set(0);
     }, 500);
 
     return () => {
-      clearTimeout(timersRef.current.outer);
-      clearTimeout(timersRef.current.inner);
+      clearTimeout(outer);
+      clearTimeout(inner);
     };
   }, [pathname, scaleX]);
 

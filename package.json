@@ -18,9 +18,11 @@
     "typecheck": "turbo typecheck"
   },
   "devDependencies": {
+    "concurrently": "^8.2.0",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "^14.2.35",
     "turbo": "^2.0.0",
-    "typescript": "^5.4.0",
-    "concurrently": "^8.2.0"
+    "typescript": "^5.4.0"
   },
   "engines": {
     "node": ">=18"

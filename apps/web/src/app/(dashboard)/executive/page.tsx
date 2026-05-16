@@ -92,6 +92,7 @@ export default function ExecutiveDashboard() {
           <div className="flex items-center gap-1 bg-[#0e0e0e] border border-outline-variant/30 rounded-lg p-0.5">
             {["6h", "12h", "24h", "7d"].map((t) => (
               <button
+                type="button"
                 key={t}
                 onClick={() => setTimeframe(t)}
                 className={`px-3 py-1.5 text-xs rounded-md transition-all ${

@@ -12,7 +12,10 @@ export default function DashboardError({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error("Dashboard error:", error);
+    // Intentionally logging for developer debugging in error boundaries
+    if (process.env.NODE_ENV === "development") {
+      console.error("Dashboard error:", error);
+    }
   }, [error]);
 
   return (

@@ -149,7 +149,11 @@ export default function VulnerabilitiesPage() {
             className="pl-10 pr-10"
           />
           {search && (
-            <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant/40 hover:text-primary">
+            <button
+              type="button"
+              onClick={() => setSearch("")}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant/40 hover:text-primary"
+            >
               <X className="w-4 h-4" />
             </button>
           )}

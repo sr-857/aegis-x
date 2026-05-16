@@ -189,15 +189,16 @@ export default function OperationsPage() {
             </div>
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-1 bg-[#0e0e0e] border border-outline-variant/20 rounded-lg p-0.5">
-                {["all", "INFO", "WARN", "ERROR", "CRITICAL"].map((level) => (
+{["all", "INFO", "WARN", "ERROR", "CRITICAL"].map((level) => (
                   <button
+                    type="button"
                     key={level}
                     onClick={() => setLogLevel(level)}
                     className={`px-2 py-1 text-[10px] rounded transition-all ${
                       logLevel === level ? "bg-primary/10 text-primary" : "text-on-surface-variant/40 hover:text-on-surface"
                     }`}
                   >
-                    {level === "all" ? "ALL" : level}
+                    {level}
                   </button>
                 ))}
               </div>

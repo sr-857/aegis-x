@@ -32,10 +32,10 @@ export function VulnCard({
   const stat = statusConfig[vulnerability.status];
 
   return (
-    <button
+    <div
       onClick={onSelect}
       className={cn(
-        "w-full text-left bg-[#121212] border rounded-lg p-4 transition-all duration-300 group hover:border-primary/30",
+        "w-full bg-[#121212] border rounded-lg p-4 transition-all duration-300 group hover:border-primary/30",
         selected
           ? "border-primary/50 bg-primary/5"
           : "border-outline-variant"
@@ -59,6 +59,6 @@ export function VulnCard({
           {stat.label}
         </Badge>
       </div>
-    </button>
+    </div>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 import { usePageTitle } from "@/lib/hooks/use-page-title";
 
-import { useState, useMemo, useCallback, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { CopyButton } from "@/components/clipboard";
 import { AssetDetailView } from "@/components/shared/asset-detail-view";
 import { motion, AnimatePresence } from "framer-motion";
@@ -181,6 +181,7 @@ export default function ExplorerPage() {
           />
           {search && (
             <button
+              type="button"
               onClick={() => setSearch("")}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant/40 hover:text-primary"
             >
@@ -203,6 +204,7 @@ export default function ExplorerPage() {
           <Button
             variant={showFilters ? "default" : "ghost"}
             size="sm"
+            type="button"
             onClick={() => setShowFilters(!showFilters)}
           >
             <SlidersHorizontal className="w-4 h-4 mr-1" />
@@ -251,6 +253,7 @@ export default function ExplorerPage() {
               <Button
                 variant="ghost"
                 size="sm"
+                type="button"
                 onClick={() => {
                   setTechFilter("all");
                   setPortFilter("all");
@@ -272,16 +275,20 @@ export default function ExplorerPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         <AnimatePresence mode="popLayout">
           {filteredAssets.map((asset, i) => (
-            <motion.button
+            <motion.div
               key={asset.id}
               layout
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ delay: i * 0.03, duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-              onClick={() => setSelectedAsset(asset)}
               className="text-left bg-[#121212] border border-outline-variant rounded-lg p-5 hover:border-primary/30 transition-all duration-300 group relative overflow-hidden"
             >
+              <button
+                type="button"
+                onClick={() => setSelectedAsset(asset)}
+                className="w-full h-full text-left relative z-10"
+              >
               <div className="absolute -right-8 -top-8 w-24 h-24 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-all duration-500" />
               <div className="relative z-10">
                 <div className="flex items-center gap-3 mb-3">
@@ -326,7 +333,8 @@ export default function ExplorerPage() {
                   <ChevronRight className="w-4 h-4 text-on-surface-variant/30 group-hover:text-primary transition-colors" />
                 </div>
               </div>
-            </motion.button>
+              </button>
+            </motion.div>
           ))}
         </AnimatePresence>
       </div>

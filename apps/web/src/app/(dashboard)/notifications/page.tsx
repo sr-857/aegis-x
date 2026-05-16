@@ -127,6 +127,7 @@ export default function NotificationsPage() {
             { value: "info", label: "Info" },
           ].map((tab) => (
             <button
+              type="button"
               key={tab.value}
               onClick={() => setFilter(tab.value)}
               className={`px-3 py-1.5 text-sm rounded-lg border transition-all duration-300 ${

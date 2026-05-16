@@ -41,6 +41,7 @@ export function useKeyboardShortcuts() {
   const [gPressed, setGPressed] = useState(false);
 
   useEffect(() => {
+    let timer: NodeJS.Timeout;
     const handler = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
 
@@ -71,13 +72,14 @@ export function useKeyboardShortcuts() {
       if (e.key === "g" && !e.metaKey && !e.ctrlKey) {
         e.preventDefault();
         setGPressed(true);
-        setTimeout(() => setGPressed(false), 500);
+        timer = setTimeout(() => setGPressed(false), 500);
         return;
       }
 
       if (gPressed && routeMap[e.key]) {
         e.preventDefault();
         setGPressed(false);
+        clearTimeout(timer);
         router.push(routeMap[e.key]);
         return;
       }
@@ -96,7 +98,10 @@ export function useKeyboardShortcuts() {
     };
 
     window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
+    return () => {
+      window.removeEventListener("keydown", handler);
+      clearTimeout(timer);
+    };
   }, [gPressed, router]);
 
   return { helpOpen, setHelpOpen };

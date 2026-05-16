@@ -66,9 +66,9 @@ export function CommandPalette() {
       } else if (command.action === "terminal:toggle") {
         window.dispatchEvent(new CustomEvent("toggle-terminal"));
       } else if (command.action === "scan:new") {
-        alert("New Scan initiated");
+        window.dispatchEvent(new CustomEvent("action:new-scan"));
       } else if (command.action === "report:generate") {
-        alert("Report generation started");
+        window.dispatchEvent(new CustomEvent("action:refresh"));
       }
     },
     [router]

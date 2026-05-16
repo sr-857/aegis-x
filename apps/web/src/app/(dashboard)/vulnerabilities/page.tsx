@@ -351,8 +351,12 @@ export default function VulnerabilitiesPage() {
                     defaultValue="Initial analysis indicates this CVE is exploitable via the public-facing API endpoint. Recommend patching within the remediation window."
                   />
                   <div className="flex justify-between items-center mt-3">
-                    <span className="text-xs text-on-surface-variant/40">Last modified: 2 hours ago</span>
-                    <Button variant="default" size="sm">Save Notes</Button>
+                    <span className="text-xs text-on-surface-variant/40">Click save to persist your analysis notes</span>
+                    <Button variant="default" size="sm" onClick={() => {
+                      addToast({ type: "success", title: "Notes saved", message: "Analyst notes have been updated" });
+                    }}>
+                      Save Notes
+                    </Button>
                   </div>
                 </CardContent>
               </Card>

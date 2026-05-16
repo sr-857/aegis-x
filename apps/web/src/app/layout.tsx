@@ -1,6 +1,10 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Providers } from "@/components/providers";
 import "@/styles/globals.css";
+
+export const viewport: Viewport = {
+  themeColor: "#f2ca50",
+};
 
 export const metadata: Metadata = {
   title: "AEGIS - Reconnaissance Intelligence Suite",
@@ -10,7 +14,6 @@ export const metadata: Metadata = {
     apple: "/apple-icon.svg",
   },
   manifest: "/manifest.json",
-  themeColor: "#f2ca50",
 };
 
 export default function RootLayout({

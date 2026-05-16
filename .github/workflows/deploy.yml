@@ -40,8 +40,8 @@ jobs:
       - name: Deploy to Vercel
         run: |
           cd apps/web
-          rm -rf .vercel
-          npx vercel --prod --yes --token=${{ secrets.VERCEL_TOKEN }}
+          npm install -g vercel@latest
+          vercel deploy ./ --prod --yes --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}

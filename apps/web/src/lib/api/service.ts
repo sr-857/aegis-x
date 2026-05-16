@@ -68,12 +68,13 @@ class ApiService {
     callback: (event: unknown) => void
   ): () => void {
     if (USE_MOCK) {
-      return mockService.subscribeScanEvents(callback as any);
+      return mockService.subscribeScanEvents(callback as (event: import("@/types").ScanEvent) => void);
     }
     let ws: WebSocket | null = null;
-    let reconnectTimer: NodeJS.Timeout;
+    let reconnectTimer: NodeJS.Timeout | undefined;
 
     const connect = () => {
+      if (reconnectTimer) clearTimeout(reconnectTimer);
       ws = new WebSocket(process.env.NEXT_PUBLIC_WS_URL || "ws://localhost:8000/ws");
       ws.onmessage = (msg) => {
         try {
@@ -83,14 +84,19 @@ class ApiService {
           callback(msg.data);
         }
       };
-      ws.onclose = () => {
-        reconnectTimer = setTimeout(connect, 3000);
+      ws.onerror = () => {
+        if (ws) ws.close();
+      };
+      ws.onclose = (event) => {
+        if (event.code !== 1000) {
+          reconnectTimer = setTimeout(connect, 3000);
+        }
       };
     };
     connect();
     return () => {
-      ws?.close();
-      clearTimeout(reconnectTimer);
+      if (reconnectTimer) clearTimeout(reconnectTimer);
+      if (ws) ws.close(1000);
     };
   }
 }

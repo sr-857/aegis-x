@@ -50,8 +50,15 @@ export default function VulnerabilitiesPage() {
   const [search, setSearch] = useState("");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [visibleCount, setVisibleCount] = useState(10);
-  const [notes, setNotes] = useState("Initial analysis indicates this CVE is exploitable via the public-facing API endpoint. Recommend patching within the remediation window.");
+  const [notes, setNotes] = useState<Record<string, string>>({});
   const { addToast } = useToast();
+
+  const handleSelect = (v: Vulnerability) => {
+    setSelected(v);
+    if (!notes[v.id]) {
+      setNotes(prev => ({ ...prev, [v.id]: "Initial analysis indicates this CVE is exploitable via the public-facing API endpoint. Recommend patching within the remediation window." }));
+    }
+  };
 
   const filtered = useMemo(() => {
     if (!vulnerabilities) return [];
@@ -217,7 +224,7 @@ export default function VulnerabilitiesPage() {
                   <VulnCard
                     vulnerability={vuln}
                     selected={selected?.id === vuln.id}
-                    onSelect={() => setSelected(vuln)}
+                    onSelect={() => handleSelect(vuln)}
                   />
                 </motion.div>
               ))}
@@ -351,8 +358,8 @@ export default function VulnerabilitiesPage() {
                   <textarea
                     placeholder="Enter analysis notes, remediation steps, or contextual information..."
                     className="w-full h-32 bg-[#0e0e0e] border border-outline-variant/30 rounded-lg p-4 text-sm text-on-surface placeholder:text-on-surface-variant/30 focus:outline-none focus:border-primary/50 resize-none transition-all duration-300"
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
+                    value={selected ? (notes[selected.id] || "") : ""}
+                    onChange={(e) => selected && setNotes(prev => ({ ...prev, [selected.id]: e.target.value }))}
                   />
                   <div className="flex justify-between items-center mt-3">
                     <span className="text-xs text-on-surface-variant/40">

@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { StatusIndicator } from "@/components/shared/status-indicator";
+import { CardSkeleton } from "@/components/ui/skeleton";
 import {
   Activity,
   Cpu,
@@ -29,13 +30,32 @@ import {
 
 export default function OperationsPage() {
   usePageTitle("Live Operations");
-  const { events } = useScanEvents();
-  const { data: telemetry } = useTelemetry();
+  const { events, isStreaming } = useScanEvents();
+  const { data: telemetry, isLoading } = useTelemetry();
   const terminalRef = useRef<HTMLDivElement>(null);
   const [logLevel, setLogLevel] = useState<string>(() => {
     if (typeof window === "undefined") return "all";
     return localStorage.getItem("ops-log-level") || "all";
   });
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6 animate-in">
+        <div className="h-8 w-64 bg-[#1a1a1a] rounded animate-pulse" />
+        <div className="h-4 w-48 bg-[#1a1a1a] rounded animate-pulse" />
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <CardSkeleton key={i} />
+          ))}
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <CardSkeleton key={i} />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   useEffect(() => {
     if (logLevel !== "all") {
@@ -71,7 +91,7 @@ export default function OperationsPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <StatusIndicator status={events.length > 0 ? "active" : "idle"} label={events.length > 0 ? "Live" : "Idle"} />
+          <StatusIndicator status={isStreaming ? "active" : "idle"} label={isStreaming ? "Live" : "Idle"} />
           <DemoBadge />
         </div>
       </div>

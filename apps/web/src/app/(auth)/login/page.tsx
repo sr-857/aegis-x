@@ -67,7 +67,7 @@ export default function LoginPage() {
       localStorage.removeItem("aegis-remember");
     }
     login(operatorId.trim(), clearanceKey);
-    router.push("/executive");
+    router.replace("/executive");
   };
 
   return (

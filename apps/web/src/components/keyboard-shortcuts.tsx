@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Command, Keyboard, X } from "lucide-react";
@@ -38,10 +38,10 @@ const routeMap: Record<string, string> = {
 export function useKeyboardShortcuts() {
   const [helpOpen, setHelpOpen] = useState(false);
   const router = useRouter();
-  const [gPressed, setGPressed] = useState(false);
+  const gPressedRef = useRef(false);
+  const timerRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   useEffect(() => {
-    let timer: NodeJS.Timeout;
     const handler = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
 
@@ -71,15 +71,18 @@ export function useKeyboardShortcuts() {
 
       if (e.key === "g" && !e.metaKey && !e.ctrlKey) {
         e.preventDefault();
-        setGPressed(true);
-        timer = setTimeout(() => setGPressed(false), 500);
+        gPressedRef.current = true;
+        clearTimeout(timerRef.current);
+        timerRef.current = setTimeout(() => {
+          gPressedRef.current = false;
+        }, 500);
         return;
       }
 
-      if (gPressed && routeMap[e.key]) {
+      if (gPressedRef.current && routeMap[e.key]) {
         e.preventDefault();
-        setGPressed(false);
-        clearTimeout(timer);
+        gPressedRef.current = false;
+        clearTimeout(timerRef.current);
         router.push(routeMap[e.key]);
         return;
       }
@@ -100,9 +103,9 @@ export function useKeyboardShortcuts() {
     window.addEventListener("keydown", handler);
     return () => {
       window.removeEventListener("keydown", handler);
-      clearTimeout(timer);
+      clearTimeout(timerRef.current);
     };
-  }, [gPressed, router]);
+  }, [router]);
 
   return { helpOpen, setHelpOpen };
 }
@@ -126,9 +129,9 @@ export function ShortcutsHelp({
             onClick={onClose}
           />
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: 0, scale: 0.95, y: -20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: -20 }}
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
             className="fixed left-1/2 top-1/2 z-50 w-full max-w-md -translate-x-1/2 -translate-y-1/2"
           >
@@ -141,6 +144,7 @@ export function ShortcutsHelp({
                   </h2>
                 </div>
                 <button
+                  type="button"
                   onClick={onClose}
                   className="text-on-surface-variant/40 hover:text-primary transition-colors"
                 >
@@ -163,7 +167,7 @@ export function ShortcutsHelp({
                 ))}
               </div>
               <div className="px-5 py-3 border-t border-outline-variant/20 bg-[#0e0e0e]/50">
-                <p className="text-[10px] text-on-surface-variant/30 text-center">
+                <p className="text-[10px] text-center text-on-surface-variant/30">
                   Press <kbd className="text-primary/60">?</kbd> to toggle this
                   panel at any time
                 </p>

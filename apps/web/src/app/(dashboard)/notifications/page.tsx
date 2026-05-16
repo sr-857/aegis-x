@@ -3,7 +3,7 @@ import { DemoBadge } from "@/components/demo-badge";
 import { usePageTitle } from "@/lib/hooks/use-page-title";
 import { useToast } from "@/components/toast";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -55,17 +55,24 @@ const initialNotifications: AppNotification[] = [
 export default function NotificationsPage() {
   usePageTitle("Notifications");
   const { notifications, addNotification, markRead, markAllRead, clearAll } = useNotificationStore();
-  const [initialized, setInitialized] = useState(false);
-  const [filter, setFilter] = useState<string>(() => {
-    return (typeof window !== "undefined" ? localStorage.getItem("notif-filter") : null) || "all";
-  });
+  const initRef = useRef(false);
+  const [filter, setFilter] = useState<string>("all");
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    if (!initialized && initialNotifications.length > 0 && notifications.length === 0) {
+    const stored = localStorage.getItem("notif-filter");
+    if (stored) setFilter(stored);
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    if (initRef.current) return;
+    if (initialNotifications.length > 0 && notifications.length === 0) {
       initialNotifications.forEach(n => addNotification(n));
-      setInitialized(true);
+      initRef.current = true;
     }
-  }, [initialized, notifications.length, addNotification]);
+  }, [hydrated, notifications.length, addNotification]);
 
   useEffect(() => {
     if (filter !== "all") {

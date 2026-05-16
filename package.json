@@ -10,7 +10,7 @@
     "dev": "turbo dev",
     "dev:web": "npm run dev --workspace=apps/web",
     "dev:local": "npm run dev --workspace=local-dev",
-    "build": "turbo build",
+    "build": "cd apps/web && next build",
     "build:web": "npm run build --workspace=apps/web",
     "build:local": "npm run build --workspace=local-dev",
     "lint": "turbo lint",

@@ -11,6 +11,7 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: false,
   },
+  distDir: ".next",
   async rewrites() {
     return [
       {
